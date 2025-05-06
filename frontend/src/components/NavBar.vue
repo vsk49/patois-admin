@@ -18,7 +18,6 @@ provide('navOpen', navOpen)
       <label for="nav-toggle" id="burger-label">
         <span id="nav-toggle-burger"></span>
       </label>
-      <hr />
     </div>
     <div id="nav-content">
       <slot name="nav">
