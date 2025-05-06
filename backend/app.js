@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import createError from 'http-errors';
 import { authenticateToken } from './authapi/auth.js';
 import motsRouter from './routes/mots.js';
+import phrasesRouter from './routes/phrases.js';
 import utilisateursRouter from './routes/utilisateurs.js';
 import logger from 'morgan';
 import cors from 'cors';
@@ -36,6 +37,9 @@ app.use((req, res, next) => {
 
 // Mount mots router
 app.use('/mots', authenticateToken, motsRouter);
+
+// Mount phrases router
+app.use('/phrases', authenticateToken, phrasesRouter);
 
 // Mount utilisateurs router
 app.use('/utilisateurs', (req, res, next) => {
