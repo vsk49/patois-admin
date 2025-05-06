@@ -139,14 +139,15 @@ async function handleAdd() {
 .mots-view {
   padding: 2rem;
   margin-left: 275px;
-  background: #fafafa;
+  background: var(--background);
+  color: var(--text);
   min-height: 100vh;
 }
 
 h1 {
   font-size: 2.2rem;
   font-weight: bold;
-  color: #e53935;
+  color: var(--primary);
   margin-bottom: 1.5rem;
 }
 
@@ -155,11 +156,12 @@ h1 {
   padding: 0.7rem 1.2rem;
   width: 100%;
   max-width: 400px;
-  border: 1.5px solid #e53935;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
   border-radius: 12px;
   font-size: 1.1rem;
   outline: none;
-  background: #fff;
+  color: var(--text);
   transition: border 0.2s;
 }
 .search-bar:focus {
@@ -170,7 +172,7 @@ h1 {
   display: flex;
   gap: 0.7rem;
   margin-bottom: 1.5rem;
-  background: #fff;
+  background: var(--container-bg);
   padding: 1rem 1.2rem;
   border-radius: 14px;
   box-shadow: 0 2px 12px 0 rgba(229,57,53,0.05);
@@ -179,9 +181,10 @@ h1 {
 .add-form input {
   padding: 0.6rem 1rem;
   border-radius: 8px;
-  border: 1.5px solid #e0e0e0;
-  background: #fafafa;
+  border: 1.5px solid var(--input-border);
+  background: var(--input-bg);
   font-size: 1rem;
+  color: var(--text);
   transition: border 0.2s;
 }
 .add-form input:focus {
@@ -206,7 +209,7 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: #fff;
+  background: var(--container-bg);
   border-radius: 16px;
   box-shadow: 0 2px 16px 0 rgba(229,57,53,0.06);
   overflow: hidden;
@@ -218,8 +221,8 @@ th, td {
 }
 
 th {
-  background: white;
-  color: #b71c1c;
+  background: var(--table-header);
+  color: var(--primary-dark);
   font-size: 1.05rem;
   font-weight: bold;
   border-bottom: 2px solid #e53935;
@@ -229,7 +232,7 @@ tbody tr {
   transition: background 0.2s;
 }
 tbody tr:hover {
-  background: #fff3f3;
+  background: var(--table-row-hover);
 }
 
 td {
@@ -239,11 +242,12 @@ td {
 }
 
 input[type="text"], input[type="password"] {
-  background: #fafafa;
-  border: 1.5px solid #e0e0e0;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
   border-radius: 8px;
   padding: 0.5rem 0.8rem;
   font-size: 1rem;
+  color: var(--text);
   transition: border 0.2s;
 }
 input[type="text"]:focus, input[type="password"]:focus {
