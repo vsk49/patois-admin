@@ -7,6 +7,9 @@ import logger from 'morgan';
 import motsRouter from './routes/mots.js';
 import utilisateursRouter from './routes/utilisateurs.js';
 import pkg from 'pg';
+import cors from 'cors'
+
+
 
 const { Pool } = pkg;
 
@@ -21,6 +24,7 @@ const pool = new Pool({
 
 const app = express();
 
+app.use(cors())
 app.use(logger('dev'));
 app.use(json());
 app.use(urlencoded({ extended: false }));

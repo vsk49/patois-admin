@@ -6,10 +6,10 @@ let router = express.Router();
 router.post('/', async (req, res) => {
     try {
         const { motfrancais, motpatois, cheminimage, cheminaudio } = req.body;
-        const sql = 'INSERT INTO mot (motfrancais, motpatois, cheminimage, cheminaudio) VALUES ($1, $2, $3, $4) RETURNING id';
+        const sql = 'INSERT INTO mot (motfrancais, motpatois, cheminimage, cheminaudio) VALUES ($1, $2, $3, $4) RETURNING idmot';
         const params = [motfrancais, motpatois, cheminimage, cheminaudio];
         const { rows } = await req.db.query(sql, params);
-        res.status(201).json({ id: rows[0].id, motfrancais, motpatois, cheminimage, cheminaudio });
+        res.status(201).json({ idmot: rows[0].idmot, motfrancais, motpatois, cheminimage, cheminaudio });
     } catch (error) {
         console.error('Error creating word:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -19,11 +19,11 @@ router.post('/', async (req, res) => {
 // R : recuperer tous les mots de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT motfrancais, motpatois FROM mot';
+        const sql = 'SELECT idmot, motfrancais, motpatois, cheminimage, cheminaudio FROM mot';
         const { rows } = await req.db.query(sql);
-        res.status(200).json(rows);
+        res.json(rows);
     } catch (error) {
-        console.error('Error retrieving words:', error);
+        console.error('Error fetching mots:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 router.get('/:idmot', async (req, res) => {
     try {
         const { idmot } = req.params;
-        const sql = 'SELECT motfrancais, motpatois, cheminimage, cheminaudio FROM mot WHERE idmot = $1';
+        const sql = 'SELECT idmot, motfrancais, motpatois, cheminimage, cheminaudio FROM mot WHERE idmot = $1';
         const { rows } = await req.db.query(sql, [idmot]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Word not found' });
@@ -63,8 +63,10 @@ router.put('/:idmot', async (req, res) => {
 router.delete('/:idmot', async (req, res) => {
     try {
         const { idmot } = req.params;
-        const sql = 'DELETE FROM mot WHERE idmot = $1';
-        await req.db.query(sql, [idmot]);
+        // Delete related progress first
+        await req.db.query('DELETE FROM user_mot_progres WHERE idmot = $1', [idmot]);
+        // Then delete the mot
+        await req.db.query('DELETE FROM mot WHERE idmot = $1', [idmot]);
         res.status(200).json({ message: 'Word deleted successfully' });
     } catch (error) {
         console.error('Error deleting word:', error);

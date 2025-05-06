@@ -20,18 +20,16 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
     },
     {
       path: '/mots',
       name: 'mots',
       component: MotsView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
     }
   ],
 })
-
-
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
