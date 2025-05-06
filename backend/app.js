@@ -1,12 +1,13 @@
-import createError from 'http-errors';
+import pkg from 'pg';
 import express, { json, urlencoded } from 'express';
 import { static as serveStatic } from 'express';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import logger from 'morgan';
+import createError from 'http-errors';
+import { authenticateToken } from './authapi/auth.js';
 import motsRouter from './routes/mots.js';
 import utilisateursRouter from './routes/utilisateurs.js';
-import pkg from 'pg';
+import logger from 'morgan';
 
 const { Pool } = pkg;
 
@@ -32,10 +33,13 @@ app.use((req, res, next) => {
 });
 
 // Mount mots router
-app.use('/mots', motsRouter);
+app.use('/mots', authenticateToken, motsRouter);
 
 // Mount utilisateurs router
-app.use('/utilisateurs', utilisateursRouter);
+app.use('/utilisateurs', (req, res, next) => {
+  if (req.path === '/auth') return next(); // Allow /auth without token
+  authenticateToken(req, res, next);
+}, utilisateursRouter);
 
 // Serve Vue frontend static files
 app.use(serveStatic(join(__dirname, '../frontend/dist')));
