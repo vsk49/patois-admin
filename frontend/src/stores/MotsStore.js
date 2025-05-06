@@ -12,7 +12,13 @@ export const useMotsStore = defineStore('mots', () => {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`${API_URL}/mots`)
+      const token = localStorage.getItem('authToken')
+
+      const res = await fetch(`${API_URL}/mots`, {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
       if (!res.ok) throw new Error('Erreur lors du chargement')
       mots.value = await res.json()
     } catch (e) {

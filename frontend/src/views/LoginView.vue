@@ -16,13 +16,22 @@ const handleLogin = async () => {
   isLoading.value = true
   errorMessage.value = null
   try {
-    // Remplacez ceci par votre logique d'authentification réelle
-    // Simule un succès si identifiant = "admin" et mot de passe = "admin"
-    await new Promise(r => setTimeout(r, 1000))
-    if (identifier.value.trim() === 'admin' && password.value === 'admin') {
-      router.replace({ name: 'Dashboard' }) // Assurez-vous que la route existe
+    // Prepare payload
+    const payload = identifier.value.includes('@')
+      ? { email: identifier.value, motdepasse: password.value }
+      : { nomutilisateur: identifier.value, motdepasse: password.value }
+
+    const res = await fetch('http://localhost:3000/utilisateurs/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    const data = await res.json()
+    if (res.ok && data.token) {
+      localStorage.setItem('authToken', data.token)
+      router.replace({ name: 'dashboard' }) // Make sure route name matches
     } else {
-      errorMessage.value = 'Identifiants invalides'
+      errorMessage.value = data.error || (data.errors && data.errors.join(', ')) || 'Identifiants invalides'
     }
   } catch (e) {
     errorMessage.value = 'Une erreur est survenue'
