@@ -68,6 +68,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: v-bind(mainMargin);
 }
 .presentation-container {
   max-width: 600px;
@@ -87,7 +88,7 @@ h1 {
   font-size: 36px;
   font-weight: bold;
   margin-bottom: 12px;
-  color: #222;
+  color: var(--primary);
   font-family: Arial, sans-serif;
 }
 .subtitle {
@@ -114,5 +115,24 @@ h1 {
 }
 .spacer {
   width: 100%;
+}
+.mots-view {
+  background: var(--background);
+  color: var(--text);
+}
+.add-form, table {
+  background: var(--container-bg);
+}
+.search-bar, .add-form input, input[type="text"], input[type="password"] {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--text);
+}
+th {
+  background: var(--table-header);
+  color: var(--primary-dark);
+}
+tbody tr:hover {
+  background: var(--table-row-hover);
 }
 </style>
