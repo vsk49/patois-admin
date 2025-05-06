@@ -90,7 +90,7 @@ const handleLogin = async () => {
 
 .login-root {
   min-height: 100vh;
-  background: var(--background, #fafafa);
+  background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,14 +99,14 @@ const handleLogin = async () => {
   max-width: 450px;
   width: 100%;
   padding: 40px 32px;
-  background: var(--container-bg, #fff);
+  background: var(--container-bg);
   border-radius: 16px;
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.06);
   position: relative;
 }
 .material-icons {
   font-size: 28px;
-  color: #222;
+  color: var(--text);
 }
 .login-content {
   display: flex;
@@ -117,16 +117,16 @@ h1 {
   font-size: 36px;
   font-weight: bold;
   margin-bottom: 12px;
-  color: #222;
+  color: var(--text);
 }
 .subtitle {
   font-size: 18px;
-  color: #888;
+  color: var(--subtitle);
   margin-bottom: 0;
 }
 .input-wrapper {
   width: 100%;
-  background: #f3f3f3;
+  background: var(--input-bg);
   border-radius: 12px;
   margin-bottom: 0;
   display: flex;
@@ -138,12 +138,12 @@ h1 {
   background: transparent;
   padding: 18px;
   font-size: 16px;
-  color: #222;
+  color: var(--text);
   outline: none;
   border-radius: 12px;
 }
 .error-message {
-  color: #e53935;
+  color: var(--primary);
   font-size: 14px;
   margin-top: 10px;
   width: 100%;
@@ -152,7 +152,7 @@ h1 {
 .login-btn {
   width: 100%;
   height: 60px;
-  background: #e53935;
+  background: var(--primary);
   color: #fff;
   font-size: 18px;
   font-weight: bold;
@@ -170,7 +170,7 @@ h1 {
 }
 .loader {
   border: 2px solid #fff;
-  border-top: 2px solid #e53935;
+  border-top: 2px solid var(--primary);
   border-radius: 50%;
   width: 20px;
   height: 20px;

@@ -64,7 +64,7 @@ export default {
 
 .presentation-root {
   min-height: 100vh;
-  background: var(--background, #fafafa);
+  background: var(--background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +74,7 @@ export default {
   max-width: 600px;
   width: 100%;
   padding: 40px 32px;
-  background: var(--container-bg, #fff);
+  background: var(--container-bg);
   border-radius: 16px;
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.06);
   position: relative;
@@ -93,14 +93,14 @@ h1 {
 }
 .subtitle {
   font-size: 18px;
-  color: #888;
+  color: var(--subtitle);
   margin-bottom: 0;
   font-family: Arial, sans-serif;
-    text-align: center;
+  text-align: center;
 }
 .description {
   font-size: 18px;
-  color: #222;
+  color: var(--text);
   text-align: center;
   margin-top: 20px;
   font-family: Arial, sans-serif;
@@ -109,7 +109,7 @@ h1 {
   display: block;
   margin-top: 24px;
   font-size: 16px;
-  color: #e53935;
+  color: var(--primary);
   font-weight: bold;
   font-family: Arial, sans-serif;
 }
