@@ -29,6 +29,10 @@ provide('navOpen', navOpen)
           <span class="material-icons nav-icon">collections</span>
           <span class="nav-text">Mots</span>
         </RouterLink>
+        <RouterLink to="/phrases" class="nav-button">
+          <span class="material-icons nav-icon">collections</span>
+          <span class="nav-text">Phrases</span>
+        </RouterLink>
       </slot>
       <div id="nav-content-highlight"></div>
     </div>
