@@ -12,7 +12,13 @@ export const usePhrasesStore = defineStore('phrases', () => {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(`${API_URL}/phrases`)
+      const token = localStorage.getItem('authToken')
+
+      const res = await fetch(`${API_URL}/phrases`, {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      })
       if (!res.ok) throw new Error('Erreur lors du chargement')
       phrases.value = await res.json()
     } catch (e) {
