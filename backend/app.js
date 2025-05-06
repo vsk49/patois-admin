@@ -5,6 +5,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import logger from 'morgan';
 import motsRouter from './routes/mots.js';
+import utilisateursRouter from './routes/utilisateurs.js';
 import pkg from 'pg';
 
 const { Pool } = pkg;
@@ -32,6 +33,9 @@ app.use((req, res, next) => {
 
 // Mount mots router
 app.use('/mots', motsRouter);
+
+// Mount utilisateurs router
+app.use('/utilisateurs', utilisateursRouter);
 
 // Serve Vue frontend static files
 app.use(serveStatic(join(__dirname, '../frontend/dist')));
