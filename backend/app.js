@@ -8,6 +8,7 @@ import { authenticateToken } from './authapi/auth.js';
 import motsRouter from './routes/mots.js';
 import utilisateursRouter from './routes/utilisateurs.js';
 import logger from 'morgan';
+import cors from 'cors';
 
 const { Pool } = pkg;
 
