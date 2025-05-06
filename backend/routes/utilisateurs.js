@@ -1,4 +1,7 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'tartiflette';
 
 let router = express.Router();
 
@@ -83,7 +86,7 @@ router.post('/auth', async (req, res) => {
     try {
         const { email, nomutilisateur, motdepasse } = req.body;
         const errors = [];
-
+        // Vérification des champs requis
         if ((!email && !nomutilisateur) || !motdepasse) {
             errors.push('Email ou nom d\'utilisateur et mot de passe sont obligatoires');
         }
@@ -93,7 +96,7 @@ router.post('/auth', async (req, res) => {
         if (nomutilisateur && nomutilisateur.length < 3) {
             errors.push('Le nom d\'utilisateur doit contenir au moins 3 caractères');
         }
-
+        // envoyer une reponse d'erreur si des champs sont invalides
         if (errors.length > 0) {
             return res.status(400).json({ errors });
         }
@@ -109,7 +112,14 @@ router.post('/auth', async (req, res) => {
 
         const { rows } = await req.db.query(sql, params);
         if (rows.length > 0 && rows[0].motdepasse === motdepasse) {
-            res.status(200).json({ message: 'Login successful' });
+            // Générer le token JWT
+            const payload = {
+                email: rows[0].email,
+                nomutilisateur: rows[0].nomutilisateur,
+                roleutilisateur: rows[0].roleutilisateur
+            };
+            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '2h' });
+            res.status(200).json({ message: 'Login successful', token });
         } else {
             res.status(401).json({ error: 'Identifiants incorrects' });
         }
