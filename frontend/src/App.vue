@@ -6,7 +6,7 @@ const route = useRoute()
 </script>
 
 <template>
-      <nav v-if="route.path !== '/login'">
+      <nav v-if="route.path !== '/'">
         <NavBar />
       </nav>
       <RouterView />
