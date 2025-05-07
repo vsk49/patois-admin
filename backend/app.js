@@ -7,6 +7,7 @@ import createError from 'http-errors';
 import { authenticateToken } from './authapi/auth.js';
 import motsRouter from './routes/mots.js';
 import phrasesRouter from './routes/phrases.js';
+import discussionsRouter from './routes/discussions.js';
 import utilisateursRouter from './routes/utilisateurs.js';
 import logger from 'morgan';
 import cors from 'cors';
@@ -40,6 +41,9 @@ app.use('/mots', authenticateToken, motsRouter);
 
 // Mount phrases router
 app.use('/phrases', authenticateToken, phrasesRouter);
+
+// Mount discussions router
+app.use('/discussions', authenticateToken, discussionsRouter);
 
 // Mount utilisateurs router
 app.use('/utilisateurs', (req, res, next) => {
