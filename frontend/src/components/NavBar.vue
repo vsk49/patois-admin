@@ -1,7 +1,7 @@
 <script setup>
 import { ref, provide, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import * as jwt_decode from 'jwt-decode'
+// import * as jwt_decode from 'jwt-decode'
 
 const navOpen = ref(true)
 provide('navOpen', navOpen)
@@ -55,6 +55,10 @@ function logout() {
         <RouterLink to="/phrases" class="nav-button">
           <span class="material-icons nav-icon">chat</span>
           <span class="nav-text">Phrases et Discussions</span>
+        </RouterLink>
+        <RouterLink to="/ressources" class="nav-button">
+          <span class="material-icons nav-icon">folder</span>
+          <span class="nav-text">Ressources</span>
         </RouterLink>
       </slot>
       <div id="nav-content-highlight"></div>
