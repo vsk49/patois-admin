@@ -1,7 +1,30 @@
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import * as jwt_decode from 'jwt-decode'
+
 const navOpen = ref(true)
 provide('navOpen', navOpen)
+
+const router = useRouter()
+const showLogout = ref(false)
+
+// Get user info from JWT
+const token = localStorage.getItem('authToken')
+const user = computed(() => {
+  if (!token) return null
+  try {
+    return jwt_decode.default(token)
+  } catch {
+    return null
+  }
+})
+
+// Logout function
+function logout() {
+  localStorage.removeItem('authToken')
+  router.replace({ name: 'login' })
+}
 </script>
 
 <template>
@@ -43,9 +66,16 @@ provide('navOpen', navOpen)
         </div>
       </slot>
       <slot name="footer-titlebox">
-        <div id="nav-footer-titlebox">
-          <a id="nav-footer-title" href="https://codepen.io/uahnbu/pens/public" target="_blank">uahnbu</a>
-          <span id="nav-footer-subtitle">Admin</span>
+        <div id="nav-footer-titlebox" @click="showLogout = !showLogout" style="cursor:pointer;">
+          <div id="nav-footer-title">
+            {{ user?.nomutilisateur || 'Utilisateur' }}
+          </div>
+          <span id="nav-footer-subtitle">{{ user?.email || '' }}</span>
+          <div v-if="showLogout" style="margin-top:8px;">
+            <button @click.stop="logout" style="padding:6px 16px;border-radius:8px;background:#e74c3c;color:#fff;border:none;cursor:pointer;">
+              Se déconnecter
+            </button>
+          </div>
         </div>
       </slot>
     </div>
