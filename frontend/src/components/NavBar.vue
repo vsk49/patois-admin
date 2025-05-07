@@ -1,7 +1,7 @@
 <script setup>
 import { ref, provide, computed } from 'vue'
 import { useRouter } from 'vue-router'
-// import * as jwt_decode from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 
 const navOpen = ref(true)
 provide('navOpen', navOpen)
@@ -9,18 +9,19 @@ provide('navOpen', navOpen)
 const router = useRouter()
 const showLogout = ref(false)
 
-// Get user info from JWT
-const token = localStorage.getItem('authToken')
+const token = computed(() => localStorage.getItem('authToken'))
 const user = computed(() => {
-  if (!token) return null
+  if (!token.value) return null
   try {
-    return jwt_decode.default(token)
-  } catch {
+    const decoded = jwtDecode(token.value)
+    console.log('Decoded JWT:', decoded)
+    return decoded
+  } catch (e) {
+    console.error('JWT decode error:', e)
     return null
   }
 })
 
-// Logout function
 function logout() {
   localStorage.removeItem('authToken')
   router.replace({ name: 'login' })
