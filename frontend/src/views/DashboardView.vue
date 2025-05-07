@@ -3,15 +3,18 @@ import { onMounted } from 'vue'
 import { useMotsStore } from '@/stores/MotsStore'
 import { usePhrasesStore } from '@/stores/PhrasesStore'
 import { useDiscussionsStore } from '@/stores/DiscussionStore'
+import { useRessourcesStore } from '@/stores/RessourcesStore'
 
 const motsStore = useMotsStore()
 const phrasesStore = usePhrasesStore()
 const discussionsStore = useDiscussionsStore()
+const ressourcesStore = useRessourcesStore()
 
 onMounted(async () => {
   await motsStore.fetchMots()
   await phrasesStore.fetchPhrases()
   await discussionsStore.fetchDiscussions()
+  await ressourcesStore.fetchRessources()
 })
 
 const mainMargin = '275px'

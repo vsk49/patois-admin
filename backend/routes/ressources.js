@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 // R : recuperer toutes les ressources de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT idressource, nomressource, typeressource, contenu, cheminimage, cheminaudio FROM ressource';
+        const sql = 'SELECT idressource, nomressource, typeressource, contenu, cheminimage, cheminaudio FROM ressource ORDER BY idressource';
         const { rows } = await req.db.query(sql);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'No resources found' });

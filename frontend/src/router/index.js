@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import LoginView from '../views/LoginView.vue'
 import MotsView from '../views/MotsView.vue'
 import PhrasesDiscussionView from '../views/PhrasesDiscussionsView.vue'
+import RessourcesView from '../views/RessourcesView.vue'
 
 // Dummy authentication check (replace with your real logic)
 function isAuthenticated() {
@@ -34,8 +35,13 @@ const router = createRouter({
       name: 'phrases',
       component: PhrasesDiscussionView,
       meta: { requiresAuth: true },
-
     },
+    {
+      path: '/ressources',
+      name: 'ressources',
+      component: RessourcesView,
+      meta: { requiresAuth: true },
+    }
   ],
 })
 
