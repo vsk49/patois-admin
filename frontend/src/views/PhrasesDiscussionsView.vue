@@ -339,15 +339,22 @@ input[type="text"]:focus, input[type="password"]:focus, select.discussion-select
   border-color: #e53935;
 }
 button {
+  min-width: 110px;      
+  height: 40px;          
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 0.5rem;
-  padding: 0.4rem 1rem;
+  padding: 0;
   border-radius: 8px;
   border: none;
   background: #e0e0e0;
   color: #b71c1c;
   font-weight: 500;
+  font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  box-sizing: border-box;
 }
 button:hover {
   background: #e53935;
