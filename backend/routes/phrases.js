@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 // R : recuperer toutes les phrases de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT idphrase, phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase ORDER BY idphrase';
+        const sql = 'SELECT idphrase, phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase ORDER BY iddiscussion, idphrase';
         const { rows } = await req.db.query(sql);
         res.status(200).json(rows);
     } catch (error) {

@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 // R : recuperer toutes les discussions de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT iddiscussion, nomdiscussion FROM discussion';
+        const sql = 'SELECT iddiscussion, nomdiscussion FROM discussion ORDER BY iddiscussion';
         const { rows } = await req.db.query(sql);
         res.status(200).json(rows);
     } catch (error) {
