@@ -8,6 +8,7 @@ import { authenticateToken } from './authapi/auth.js';
 import motsRouter from './routes/mots.js';
 import phrasesRouter from './routes/phrases.js';
 import discussionsRouter from './routes/discussions.js';
+import ressourcesRouter from './routes/ressources.js';
 import utilisateursRouter from './routes/utilisateurs.js';
 import logger from 'morgan';
 import cors from 'cors';
@@ -44,6 +45,9 @@ app.use('/phrases', authenticateToken, phrasesRouter);
 
 // Mount discussions router
 app.use('/discussions', authenticateToken, discussionsRouter);
+
+// Mount ressources router
+app.use('/ressources', authenticateToken, ressourcesRouter);
 
 // Mount utilisateurs router
 app.use('/utilisateurs', (req, res, next) => {
