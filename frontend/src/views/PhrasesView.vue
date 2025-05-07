@@ -28,6 +28,7 @@ const filteredPhrases = computed(() => {
 
 onMounted(async () => {
   await fetchPhrases()
+  console.log('Phrases fetched:', phrases)
 })
 
 function startEdit(phrase) {

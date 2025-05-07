@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 // R : recuperer tous les mots de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT idmot, motfrancais, motpatois, cheminimage, cheminaudio FROM mot';
+        const sql = 'SELECT idmot, motfrancais, motpatois, cheminimage, cheminaudio FROM mot ORDER BY idmot';
         const { rows } = await req.db.query(sql);
         res.json(rows);
     } catch (error) {

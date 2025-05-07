@@ -32,16 +32,24 @@ export const useMotsStore = defineStore('mots', () => {
     loading.value = true
     error.value = null
     try {
+      const token = localStorage.getItem('authToken')
       const img = cheminimage
         ? cheminimage.startsWith('assets/') ? cheminimage : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`
         : ''
       const audio = cheminaudio
-        ? cheminaudio.startsWith('audio/') ? cheminaudio : `audio/${cheminaudio.replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
+        ? (
+            cheminaudio.startsWith('audio/')
+              ? cheminaudio.replace(/\s+/g, '_')
+              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
+          )
         : ''
 
       const res = await fetch(`${API_URL}/mots`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
         body: JSON.stringify({ motfrancais, motpatois, cheminimage: img, cheminaudio: audio })
       })
       if (!res.ok) throw new Error('Erreur lors de l\'ajout')
@@ -64,17 +72,24 @@ export const useMotsStore = defineStore('mots', () => {
     loading.value = true
     error.value = null
     try {
-
+      const token = localStorage.getItem('authToken')
       const img = cheminimage
         ? cheminimage.startsWith('assets/') ? cheminimage : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`
         : ''
       const audio = cheminaudio
-        ? cheminaudio.startsWith('audio/') ? cheminaudio : `audio/${cheminaudio.replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
+        ? (
+            cheminaudio.startsWith('audio/')
+              ? cheminaudio.replace(/\s+/g, '_')
+              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
+          )
         : ''
 
       const res = await fetch(`${API_URL}/mots/${idmot}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
         body: JSON.stringify({ motfrancais, motpatois, cheminimage: img, cheminaudio: audio })
       })
       if (!res.ok) throw new Error('Erreur lors de la modification')
@@ -94,8 +109,12 @@ export const useMotsStore = defineStore('mots', () => {
     loading.value = true
     error.value = null
     try {
+      const token = localStorage.getItem('authToken')
       const res = await fetch(`${API_URL}/mots/${idmot}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
       })
       if (!res.ok) throw new Error('Erreur lors de la suppression')
       mots.value = mots.value.filter(m => m.idmot !== idmot)

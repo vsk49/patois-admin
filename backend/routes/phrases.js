@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 // R : recuperer toutes les phrases de la base de donnees
 router.get('/', async (req, res) => {
     try {
-        const sql = 'SELECT phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase';
+        const sql = 'SELECT idphrase, phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase ORDER BY idphrase';
         const { rows } = await req.db.query(sql);
         res.status(200).json(rows);
     } catch (error) {
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 router.get('/:idphrase', async (req, res) => {
     try {
         const { idphrase } = req.params;
-        const sql = 'SELECT phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase WHERE idphrase = $1';
+        const sql = 'SELECT idphrase, phrasefrancais, phrasepatois, cheminaudio, iddiscussion FROM phrase WHERE idphrase = $1';
         const { rows } = await req.db.query(sql, [idphrase]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Phrase not found' });
