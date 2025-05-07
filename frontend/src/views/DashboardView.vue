@@ -1,4 +1,19 @@
 <script setup>
+import { onMounted } from 'vue'
+import { useMotsStore } from '@/stores/MotsStore'
+import { usePhrasesStore } from '@/stores/PhrasesStore'
+import { useDiscussionsStore } from '@/stores/DiscussionStore'
+
+const motsStore = useMotsStore()
+const phrasesStore = usePhrasesStore()
+const discussionsStore = useDiscussionsStore()
+
+onMounted(async () => {
+  await motsStore.fetchMots()
+  await phrasesStore.fetchPhrases()
+  await discussionsStore.fetchDiscussions()
+})
+
 const mainMargin = '275px'
 </script>
 
@@ -18,46 +33,6 @@ const mainMargin = '275px'
     </div>
   </div>
 </template>
-
-<script>
-export default {
-    name: 'DashboardView',
-    data() {
-        return {
-            databaseRecords: [
-                { id: 1, name: 'Record 1', description: 'Sample description 1' },
-                { id: 2, name: 'Record 2', description: 'Sample description 2' },
-            ],
-        };
-    },
-    methods: {
-        createEntry() {
-            // Placeholder: Code to create a new database entry
-            alert('Create entry functionality not implemented yet.');
-        },
-        editEntry(item) {
-            // Placeholder: Code to edit the selected entry
-            if (item) {
-                alert(`Edit record with ID ${item.id} - functionality not implemented yet.`);
-            } else {
-                alert('Please select a record to edit.');
-            }
-        },
-        deleteEntry(item) {
-            // Placeholder: Code to delete the selected entry
-            if (item) {
-                alert(`Delete record with ID ${item.id} - functionality not implemented yet.`);
-            } else {
-                alert('Please select a record to delete.');
-            }
-        },
-        refreshData() {
-            // Placeholder: Code to refresh the database records
-            alert('Refresh functionality not implemented yet.');
-        }
-    }
-};
-</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
