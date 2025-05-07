@@ -49,12 +49,12 @@ function logout() {
           <span class="nav-text">Accueil</span>
         </RouterLink>
         <RouterLink to="/mots" class="nav-button">
-          <span class="material-icons nav-icon">collections</span>
+          <span class="material-icons nav-icon">translate</span>
           <span class="nav-text">Mots</span>
         </RouterLink>
         <RouterLink to="/phrases" class="nav-button">
-          <span class="material-icons nav-icon">collections</span>
-          <span class="nav-text">Phrases</span>
+          <span class="material-icons nav-icon">chat</span>
+          <span class="nav-text">Phrases et Discussions</span>
         </RouterLink>
       </slot>
       <div id="nav-content-highlight"></div>
@@ -86,7 +86,7 @@ function logout() {
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 #nav-bar {
-  position: absolute;
+  position: fixed;
   left: 1vw;
   top: 1vw;
   height: calc(100% - 2vw);

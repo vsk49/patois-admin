@@ -28,7 +28,6 @@ const filteredMots = computed(() => {
 
 onMounted(async () => {
   await fetchMots()
-  console.log('Mots fetched:', mots)
 })
 
 function startEdit(mot) {
@@ -73,86 +72,98 @@ async function handleAdd() {
 </script>
 
 <template>
-  <div class="mots-view">
-    <h1>Liste des mots</h1>
-    <input
-      v-model="search"
-      class="search-bar"
-      type="text"
-      placeholder="Rechercher un mot ou patois..."
-    />
+  <div class="page-root">
+    <section class="card-section">
+      <h1>Mots</h1>
+      <input
+        v-model="search"
+        class="search-bar"
+        type="text"
+        placeholder="Rechercher un mot ou patois..."
+      />
 
-    <!-- Add new mot -->
-    <form @submit.prevent="handleAdd" class="add-form">
-      <input v-model="newMotFr" placeholder="Mot français" required />
-      <input v-model="newMotPa" placeholder="Mot patois" required />
-      <input v-model="newCheminImage" placeholder="Chemin image" />
-      <input v-model="newCheminAudio" placeholder="Chemin audio" />
-      <button type="submit">Ajouter</button>
-    </form>
+      <form @submit.prevent="handleAdd" class="add-form">
+        <input v-model="newMotFr" placeholder="Mot français" required />
+        <input v-model="newMotPa" placeholder="Mot patois" required />
+        <input v-model="newCheminImage" placeholder="Chemin image" />
+        <input v-model="newCheminAudio" placeholder="Chemin audio" />
+        <button type="submit">Ajouter</button>
+      </form>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Mot</th>
-          <th>Patois</th>
-          <th>Image</th>
-          <th>Audio</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="mot in filteredMots" :key="mot.idmot || mot.motfrancais + mot.motpatois">
-          <td v-if="editId !== mot.idmot">{{ mot.motfrancais }}</td>
-          <td v-else>
-            <input v-model="editMotFr" />
-          </td>
-          <td v-if="editId !== mot.idmot">{{ mot.motpatois }}</td>
-          <td v-else>
-            <input v-model="editMotPa" />
-          </td>
-          <td v-if="editId !== mot.idmot">{{ mot.cheminimage }}</td>
-          <td v-else>
-            <input v-model="editCheminImage" />
-          </td>
-          <td v-if="editId !== mot.idmot">{{ mot.cheminaudio }}</td>
-          <td v-else>
-            <input v-model="editCheminAudio" />
-          </td>
-          <td>
-            <template v-if="editId === mot.idmot">
-              <button @click="saveEdit">Enregistrer</button>
-              <button @click="cancelEdit">Annuler</button>
-            </template>
-            <template v-else>
+      <div v-if="loading" class="info-msg">Chargement...</div>
+      <div v-if="error" class="error-msg">{{ error }}</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mot</th>
+            <th>Patois</th>
+            <th>Image</th>
+            <th>Audio</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="mot in filteredMots" :key="mot.idmot || mot.motfrancais + mot.motpatois">
+            <td v-if="editId !== mot.idmot">{{ mot.motfrancais }}</td>
+            <td v-else>
+              <input v-model="editMotFr" />
+            </td>
+            <td v-if="editId !== mot.idmot">{{ mot.motpatois }}</td>
+            <td v-else>
+              <input v-model="editMotPa" />
+            </td>
+            <td v-if="editId !== mot.idmot">{{ mot.cheminimage }}</td>
+            <td v-else>
+              <input v-model="editCheminImage" />
+            </td>
+            <td v-if="editId !== mot.idmot">{{ mot.cheminaudio }}</td>
+            <td v-else>
+              <input v-model="editCheminAudio" />
+            </td>
+            <td>
+              <template v-if="editId === mot.idmot">
+                <button @click="saveEdit">Enregistrer</button>
+                <button @click="cancelEdit">Annuler</button>
+              </template>
+              <template v-else>
                 <button class="modifier-btn" @click="startEdit(mot)">Modifier</button>
-              <button @click="deleteMot(mot.idmot)">Supprimer</button>
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+                <button @click="deleteMot(mot.idmot)">Supprimer</button>
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.mots-view {
+.page-root {
   padding: 2rem;
   margin-left: 275px;
   background: var(--background);
   color: var(--text);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
-
+.card-section {
+  background: var(--container-bg);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 rgba(229,57,53,0.06);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
 h1 {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: bold;
   color: var(--primary);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
-
 .search-bar {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   padding: 0.7rem 1.2rem;
   width: 100%;
   max-width: 400px;
@@ -167,16 +178,16 @@ h1 {
 .search-bar:focus {
   border-color: #b71c1c;
 }
-
 .add-form {
   display: flex;
   gap: 0.7rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   background: var(--container-bg);
   padding: 1rem 1.2rem;
   border-radius: 14px;
   box-shadow: 0 2px 12px 0 rgba(229,57,53,0.05);
   align-items: center;
+  flex-wrap: wrap;
 }
 .add-form input {
   padding: 0.6rem 1rem;
@@ -204,7 +215,6 @@ h1 {
 .add-form button:hover {
   background: #b71c1c;
 }
-
 table {
   width: 100%;
   border-collapse: separate;
@@ -213,13 +223,12 @@ table {
   border-radius: 16px;
   box-shadow: 0 2px 16px 0 rgba(229,57,53,0.06);
   overflow: hidden;
+  margin-bottom: 0;
 }
-
 th, td {
   padding: 1rem 0.8rem;
   text-align: left;
 }
-
 th {
   background: var(--table-header);
   color: var(--primary-dark);
@@ -227,20 +236,17 @@ th {
   font-weight: bold;
   border-bottom: 2px solid #e53935;
 }
-
 tbody tr {
   transition: background 0.2s;
 }
 tbody tr:hover {
   background: var(--table-row-hover);
 }
-
 td {
   border-bottom: 1px solid #f0f0f0;
   font-size: 1rem;
   color: var(--text);
 }
-
 input[type="text"], input[type="password"] {
   background: var(--input-bg);
   border: 1.5px solid var(--input-border);
@@ -253,26 +259,28 @@ input[type="text"], input[type="password"] {
 input[type="text"]:focus, input[type="password"]:focus {
   border-color: #e53935;
 }
-
 button {
+  min-width: 110px;      
+  height: 40px;          
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-right: 0.5rem;
-  padding: 0.4rem 1rem;
+  padding: 0;
   border-radius: 8px;
   border: none;
   background: #e0e0e0;
   color: #b71c1c;
   font-weight: 500;
+  font-size: 1rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  box-sizing: border-box;
 }
-
-/* Only the Supprimer (delete) button stays red on hover */
 button:hover {
   background: #e53935;
   color: #fff;
 }
-
-/* Make the "Modifier" (edit) button blue on hover */
 button.modifier-btn {
   color: black;
   background: #e0e0e0;
@@ -281,10 +289,20 @@ button.modifier-btn:hover {
   background: blue;
   color: white;
 }
-
+.info-msg {
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+.error-msg {
+  color: #e53935;
+  margin-bottom: 1rem;
+}
 @media (max-width: 900px) {
-  .mots-view {
+  .page-root {
     margin-left: 0;
+    padding: 1rem;
+  }
+  .card-section {
     padding: 1rem;
   }
   .add-form {
