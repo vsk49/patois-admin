@@ -39,6 +39,11 @@ const groupedRessources = computed(() => {
   return groups
 })
 
+const uniqueTypes = computed(() => {
+  const types = ressources.map(r => r.typeressource).filter(Boolean)
+  return [...new Set(types)]
+})
+
 onMounted(async () => {
   await fetchRessources()
 })
@@ -104,8 +109,8 @@ async function handleAdd() {
         <input v-model="newNom" placeholder="Nom" required />
         <select v-model="newType" class="discussion-select" required>
           <option value="">Aucun type</option>
-          <option v-for="r in ressources" :key="r.idressource" :value="r.idressource">
-            {{ r.typeressource }}
+          <option v-for="type in uniqueTypes" :key="type" :value="type">
+            {{ type }}
           </option>
         </select>
         <input v-model="newContenu" placeholder="Contenu" />
