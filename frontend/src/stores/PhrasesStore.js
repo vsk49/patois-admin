@@ -1,13 +1,19 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
+// URL de base de l'API backend
 const API_URL = 'http://localhost:3000'
 
+// Définition du store Pinia pour la gestion des phrases
 export const usePhrasesStore = defineStore('phrases', () => {
+  // Liste des phrases
   const phrases = ref([])
+  // Indicateur de chargement
   const loading = ref(false)
+  // Message d'erreur éventuel
   const error = ref(null)
 
+  // Récupère toutes les phrases depuis l'API
   async function fetchPhrases() {
     loading.value = true
     error.value = null
@@ -27,11 +33,13 @@ export const usePhrasesStore = defineStore('phrases', () => {
     }
   }
 
+  // Ajoute une nouvelle phrase via l'API
   async function addPhrase(phrasefrancais, phrasepatois, cheminaudio, iddiscussion) {
     loading.value = true
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
+      // Formate le chemin de l'audio
       const audio = cheminaudio
         ? (
             cheminaudio.startsWith('audio/')
@@ -49,6 +57,7 @@ export const usePhrasesStore = defineStore('phrases', () => {
       })
       if (!res.ok) throw new Error('Erreur lors de l\'ajout')
       const newPhrase = await res.json()
+      // Ajoute la phrase à la liste locale
       phrases.value.push(newPhrase)
     } catch (e) {
       error.value = e.message
@@ -57,11 +66,13 @@ export const usePhrasesStore = defineStore('phrases', () => {
     }
   }
 
+  // Met à jour une phrase existante via l'API
   async function updatePhrase(idphrase, phrasefrancais, phrasepatois, cheminaudio, iddiscussion) {
     loading.value = true
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
+      // Formate le chemin de l'audio
       const audio = cheminaudio
         ? (
             cheminaudio.startsWith('audio/')
@@ -78,6 +89,7 @@ export const usePhrasesStore = defineStore('phrases', () => {
         body: JSON.stringify({ phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion })
       })
       if (!res.ok) throw new Error('Erreur lors de la modification')
+      // Met à jour la phrase dans la liste locale
       const idx = phrases.value.findIndex(p => p.idphrase === idphrase)
       if (idx !== -1) {
         phrases.value[idx] = { idphrase, phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion }
@@ -89,6 +101,7 @@ export const usePhrasesStore = defineStore('phrases', () => {
     }
   }
 
+  // Supprime une phrase via l'API
   async function deletePhrase(idphrase) {
     loading.value = true
     error.value = null
@@ -101,6 +114,7 @@ export const usePhrasesStore = defineStore('phrases', () => {
         }
       })
       if (!res.ok) throw new Error('Erreur lors de la suppression')
+      // Retire la phrase de la liste locale
       phrases.value = phrases.value.filter(p => p.idphrase !== idphrase)
     } catch (e) {
       error.value = e.message
@@ -109,5 +123,6 @@ export const usePhrasesStore = defineStore('phrases', () => {
     }
   }
 
+  // Expose les états et méthodes du store
   return { phrases, loading, error, fetchPhrases, addPhrase, updatePhrase, deletePhrase }
 })
