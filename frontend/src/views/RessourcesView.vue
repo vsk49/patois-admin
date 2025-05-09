@@ -29,6 +29,16 @@ const filteredRessources = computed(() => {
   )
 })
 
+const groupedRessources = computed(() => {
+  const groups = {}
+  filteredRessources.value.forEach(r => {
+    const type = r.typeressource || 'Aucun type'
+    if (!groups[type]) groups[type] = []
+    groups[type].push(r)
+  })
+  return groups
+})
+
 onMounted(async () => {
   await fetchRessources()
 })
@@ -92,7 +102,12 @@ async function handleAdd() {
 
       <form @submit.prevent="handleAdd" class="add-form">
         <input v-model="newNom" placeholder="Nom" required />
-        <input v-model="newType" placeholder="Type" required />
+        <select v-model="newType" class="discussion-select" required>
+          <option value="">Aucun type</option>
+          <option v-for="r in ressources" :key="r.idressource" :value="r.idressource">
+            {{ r.typeressource }}
+          </option>
+        </select>
         <input v-model="newContenu" placeholder="Contenu" />
         <input v-model="newCheminImage" placeholder="Chemin image" />
         <input v-model="newCheminAudio" placeholder="Chemin audio" />
@@ -102,44 +117,60 @@ async function handleAdd() {
       <div v-if="loading" class="info-msg">Chargement...</div>
       <div v-if="error" class="error-msg">{{ error }}</div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Contenu</th>
-            <th>Image</th>
-            <th>Audio</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="ressource in filteredRessources" :key="ressource.idressource">
-            <td>{{ ressource.idressource }}</td>
-            <td v-if="editId !== ressource.idressource">{{ ressource.nomressource }}</td>
-            <td v-else><input v-model="editNom" /></td>
-            <td v-if="editId !== ressource.idressource">{{ ressource.typeressource }}</td>
-            <td v-else><input v-model="editType" /></td>
-            <td v-if="editId !== ressource.idressource">{{ ressource.contenu }}</td>
-            <td v-else><input v-model="editContenu" /></td>
-            <td v-if="editId !== ressource.idressource">{{ ressource.cheminimage }}</td>
-            <td v-else><input v-model="editCheminImage" /></td>
-            <td v-if="editId !== ressource.idressource">{{ ressource.cheminaudio }}</td>
-            <td v-else><input v-model="editCheminAudio" /></td>
-            <td>
-              <template v-if="editId === ressource.idressource">
-                <button @click="saveEdit">Enregistrer</button>
-                <button @click="cancelEdit">Annuler</button>
-              </template>
-              <template v-else>
-                <button class="modifier-btn" @click="startEdit(ressource)">Modifier</button>
-                <button @click="deleteRessource(ressource.idressource)">Supprimer</button>
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-for="(ressourcesGroup, type) in groupedRessources" :key="type" style="margin-bottom:2rem;">
+        <h2 class="type-title">{{ type }}</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Contenu</th>
+              <th>Image</th>
+              <th>Audio</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="ressource in ressourcesGroup" :key="ressource.idressource">
+              <td>{{ ressource.idressource }}</td>
+              <td v-if="editId !== ressource.idressource">{{ ressource.nomressource }}</td>
+              <td v-else><input v-model="editNom" /></td>
+
+              <td v-if="editId !== ressource.idressource">
+                <span v-if="ressource.idressource">
+                  {{ ressources.find(r => r.idressource === ressource.idressource)?.typeressource || '_' }}
+                </span>
+                <span v-else>_</span>
+              </td>
+              <td v-else>
+                <select v-model="editType" class="discussion-select">
+                  <option value="">Aucun type</option>
+                  <option v-for="r in ressources" :key="r.idressource" :value="r.idressource">
+                    {{ r.typeressource }}
+                  </option>
+                </select>
+              </td>
+              <td v-if="editId !== ressource.idressource">{{ ressource.contenu }}</td>
+              <td v-else><input v-model="editContenu" /></td>
+              <td v-if="editId !== ressource.idressource">{{ ressource.cheminimage }}</td>
+              <td v-else><input v-model="editCheminImage" /></td>
+              <td v-if="editId !== ressource.idressource">{{ ressource.cheminaudio }}</td>
+              <td v-else><input v-model="editCheminAudio" /></td>
+              <td>
+                <template v-if="editId === ressource.idressource">
+                  <button @click="saveEdit">Enregistrer</button>
+                  <button @click="cancelEdit">Annuler</button>
+                </template>
+                <template v-else>
+                  <button class="modifier-btn" @click="startEdit(ressource)">Modifier</button>
+                  <button @click="deleteRessource(ressource.idressource)">Supprimer</button>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </div>
 </template>
@@ -265,6 +296,18 @@ input[type="text"], input[type="password"] {
 input[type="text"]:focus, input[type="password"]:focus {
   border-color: #e53935;
 }
+input[type="text"], input[type="password"], select.discussion-select {
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  color: var(--text);
+  transition: border 0.2s;
+}
+input[type="text"]:focus, input[type="password"]:focus, select.discussion-select:focus {
+  border-color: #e53935;
+}
 button {
   min-width: 110px;      
   height: 40px;          
@@ -302,6 +345,10 @@ button.modifier-btn:hover {
 .error-msg {
   color: #e53935;
   margin-bottom: 1rem;
+}
+.type-title {
+  color: #e53935;
+  margin-bottom: 0.7rem;
 }
 @media (max-width: 900px) {
   .page-root {
