@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 // URL de base de l'API backend
 const API_URL = 'http://localhost:3000'
@@ -19,15 +20,12 @@ export const usePhrasesStore = defineStore('phrases', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/phrases`, {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      const res = await axios.get(`${API_URL}/phrases`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors du chargement')
-      phrases.value = await res.json()
+      phrases.value = res.data
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -47,20 +45,14 @@ export const usePhrasesStore = defineStore('phrases', () => {
               : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
           )
         : ''
-      const res = await fetch(`${API_URL}/phrases`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion })
+      await axios.post(`${API_URL}/phrases`, {
+        phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion
+      }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de l\'ajout')
-      const newPhrase = await res.json()
-      // Ajoute la phrase à la liste locale
-      phrases.value.push(newPhrase)
+      await fetchPhrases() // Rafraîchit la liste après ajout
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -72,7 +64,6 @@ export const usePhrasesStore = defineStore('phrases', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      // Formate le chemin de l'audio
       const audio = cheminaudio
         ? (
             cheminaudio.startsWith('audio/')
@@ -80,22 +71,14 @@ export const usePhrasesStore = defineStore('phrases', () => {
               : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
           )
         : ''
-      const res = await fetch(`${API_URL}/phrases/${idphrase}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion })
+      await axios.put(`${API_URL}/phrases/${idphrase}`, {
+        phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion
+      }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la modification')
-      // Met à jour la phrase dans la liste locale
-      const idx = phrases.value.findIndex(p => p.idphrase === idphrase)
-      if (idx !== -1) {
-        phrases.value[idx] = { idphrase, phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion }
-      }
+      await fetchPhrases() // Rafraîchit la liste après modification
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -107,17 +90,12 @@ export const usePhrasesStore = defineStore('phrases', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/phrases/${idphrase}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      await axios.delete(`${API_URL}/phrases/${idphrase}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la suppression')
-      // Retire la phrase de la liste locale
-      phrases.value = phrases.value.filter(p => p.idphrase !== idphrase)
+      await fetchPhrases() // Rafraîchit la liste après suppression
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }

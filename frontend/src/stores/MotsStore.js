@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 // URL de base de l'API backend
 const API_URL = 'http://localhost:3000'
@@ -19,15 +20,12 @@ export const useMotsStore = defineStore('mots', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/mots`, {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      const res = await axios.get(`${API_URL}/mots`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors du chargement')
-      mots.value = await res.json()
+      mots.value = res.data
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -52,26 +50,14 @@ export const useMotsStore = defineStore('mots', () => {
           )
         : ''
 
-      const res = await fetch(`${API_URL}/mots`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ motfrancais, motpatois, cheminimage: img, cheminaudio: audio })
+      await axios.post(`${API_URL}/mots`, {
+        motfrancais, motpatois, cheminimage: img, cheminaudio: audio
+      }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de l\'ajout')
-      const newMot = await res.json()
-      // Ajoute le mot à la liste locale
-      mots.value.push({
-        idmot: newMot.idmot || newMot.id,
-        motfrancais: newMot.motfrancais,
-        motpatois: newMot.motpatois,
-        cheminimage: newMot.cheminimage,
-        cheminaudio: newMot.cheminaudio
-      })
+      await fetchMots() // <-- Rafraîchit la liste après ajout
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -96,22 +82,14 @@ export const useMotsStore = defineStore('mots', () => {
           )
         : ''
 
-      const res = await fetch(`${API_URL}/mots/${idmot}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ motfrancais, motpatois, cheminimage: img, cheminaudio: audio })
+      await axios.put(`${API_URL}/mots/${idmot}`, {
+        motfrancais, motpatois, cheminimage: img, cheminaudio: audio
+      }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la modification')
-      // Met à jour le mot dans la liste locale
-      const idx = mots.value.findIndex(m => m.idmot === idmot)
-      if (idx !== -1) {
-        mots.value[idx] = { idmot, motfrancais, motpatois, cheminimage: img, cheminaudio: audio }
-      }
+      await fetchMots() // <-- Rafraîchit la liste après modification
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -123,17 +101,12 @@ export const useMotsStore = defineStore('mots', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/mots/${idmot}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      await axios.delete(`${API_URL}/mots/${idmot}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la suppression')
-      // Retire le mot de la liste locale
-      mots.value = mots.value.filter(m => m.idmot !== idmot)
+      await fetchMots() // <-- Rafraîchit la liste après suppression
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }

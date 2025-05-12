@@ -3,7 +3,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRessourcesStore } from '@/stores/RessourcesStore'
 
 const ressourcesStore = useRessourcesStore()
-const { ressources, loading, error, fetchRessources, addRessource, updateRessource, deleteRessource } = ressourcesStore
 
 const search = ref('')
 const newNom = ref('')
@@ -19,9 +18,9 @@ const editCheminImage = ref('')
 const editCheminAudio = ref('')
 
 const filteredRessources = computed(() => {
-  if (!search.value) return ressources
+  if (!search.value) return ressourcesStore.ressources
   const s = search.value.toLowerCase()
-  return ressources.filter(
+  return ressourcesStore.ressources.filter(
     r =>
       r.nomressource?.toLowerCase().includes(s) ||
       r.typeressource?.toLowerCase().includes(s) ||
@@ -40,12 +39,12 @@ const groupedRessources = computed(() => {
 })
 
 const uniqueTypes = computed(() => {
-  const types = ressources.map(r => r.typeressource).filter(Boolean)
+  const types = ressourcesStore.ressources.map(r => r.typeressource).filter(Boolean)
   return [...new Set(types)]
 })
 
 onMounted(async () => {
-  await fetchRessources()
+  await ressourcesStore.fetchRessources()
 })
 
 function startEdit(ressource) {
@@ -67,7 +66,7 @@ function cancelEdit() {
 }
 
 async function saveEdit() {
-  await updateRessource(
+  await ressourcesStore.updateRessource(
     editId.value,
     editNom.value,
     editType.value,
@@ -79,7 +78,7 @@ async function saveEdit() {
 }
 
 async function handleAdd() {
-  await addRessource(
+  await ressourcesStore.addRessource(
     newNom.value,
     newType.value,
     newContenu.value,
@@ -105,6 +104,8 @@ async function handleAdd() {
         placeholder="Rechercher une ressource..."
       />
 
+      <button @click="ressourcesStore.fetchRessources" style="margin-bottom:1rem;">Rafraîchir</button>
+
       <form @submit.prevent="handleAdd" class="add-form">
         <input v-model="newNom" placeholder="Nom" required />
         <select v-model="newType" class="discussion-select" required>
@@ -119,8 +120,10 @@ async function handleAdd() {
         <button type="submit">Ajouter</button>
       </form>
 
-      <div v-if="loading" class="info-msg">Chargement...</div>
-      <div v-if="error" class="error-msg">{{ error }}</div>
+      <button @click="ressourcesStore.fetchRessources" style="margin-bottom:1rem;">Rafraîchir</button>
+
+      <div v-if="ressourcesStore.loading" class="info-msg">Chargement...</div>
+      <div v-if="ressourcesStore.error" class="error-msg">{{ ressourcesStore.error }}</div>
 
       <div v-for="(ressourcesGroup, type) in groupedRessources" :key="type" style="margin-bottom:2rem;">
         <h2 class="type-title">{{ type }}</h2>
@@ -144,15 +147,15 @@ async function handleAdd() {
 
               <td v-if="editId !== ressource.idressource">
                 <span v-if="ressource.idressource">
-                  {{ ressources.find(r => r.idressource === ressource.idressource)?.typeressource || '_' }}
+                  {{ ressourcesStore.ressources.find(r => r.idressource === ressource.idressource)?.typeressource || '_' }}
                 </span>
                 <span v-else>_</span>
               </td>
               <td v-else>
                 <select v-model="editType" class="discussion-select">
                   <option value="">Aucun type</option>
-                  <option v-for="r in ressources" :key="r.idressource" :value="r.idressource">
-                    {{ r.typeressource }}
+                  <option v-for="type in uniqueTypes" :key="type" :value="type">
+                    {{ type }}
                   </option>
                 </select>
               </td>
@@ -169,7 +172,7 @@ async function handleAdd() {
                 </template>
                 <template v-else>
                   <button class="modifier-btn" @click="startEdit(ressource)">Modifier</button>
-                  <button @click="deleteRessource(ressource.idressource)">Supprimer</button>
+                  <button @click="ressourcesStore.deleteRessource(ressource.idressource)">Supprimer</button>
                 </template>
               </td>
             </tr>

@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 // URL de base de l'API backend
 const API_URL = 'http://localhost:3000'
@@ -19,15 +20,12 @@ export const useDiscussionsStore = defineStore('discussions', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/discussions`, {
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      const res = await axios.get(`${API_URL}/discussions`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors du chargement')
-      discussions.value = await res.json()
+      discussions.value = res.data
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -39,20 +37,12 @@ export const useDiscussionsStore = defineStore('discussions', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/discussions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ nomdiscussion })
+      await axios.post(`${API_URL}/discussions`, { nomdiscussion }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de l\'ajout')
-      const result = await res.json()
-      // Ajoute la discussion à la liste locale
-      discussions.value.push(result.discussion || result)
+      await fetchDiscussions() // Rafraîchit la liste après ajout
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -64,23 +54,12 @@ export const useDiscussionsStore = defineStore('discussions', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/discussions/${iddiscussion}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({ nomdiscussion })
+      await axios.put(`${API_URL}/discussions/${iddiscussion}`, { nomdiscussion }, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la modification')
-      const result = await res.json()
-      // Met à jour la discussion dans la liste locale
-      const idx = discussions.value.findIndex(d => d.iddiscussion === iddiscussion)
-      if (idx !== -1) {
-        discussions.value[idx] = result.discussion || { iddiscussion, nomdiscussion }
-      }
+      await fetchDiscussions() // Rafraîchit la liste après modification
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }
@@ -92,17 +71,12 @@ export const useDiscussionsStore = defineStore('discussions', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch(`${API_URL}/discussions/${iddiscussion}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
+      await axios.delete(`${API_URL}/discussions/${iddiscussion}`, {
+        headers: { 'Authorization': 'Bearer ' + token }
       })
-      if (!res.ok) throw new Error('Erreur lors de la suppression')
-      // Retire la discussion de la liste locale
-      discussions.value = discussions.value.filter(d => d.iddiscussion !== iddiscussion)
+      await fetchDiscussions() // Rafraîchit la liste après suppression
     } catch (e) {
-      error.value = e.message
+      error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
     }

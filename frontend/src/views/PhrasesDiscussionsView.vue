@@ -4,10 +4,7 @@ import { usePhrasesStore } from '@/stores/PhrasesStore'
 import { useDiscussionsStore } from '@/stores/DiscussionStore'
 
 const phrasesStore = usePhrasesStore()
-const { phrases, loading, error, fetchPhrases, addPhrase, updatePhrase, deletePhrase } = phrasesStore
-
 const discussionsStore = useDiscussionsStore()
-const { discussions, loading: loadingDiscussions, error: errorDiscussions, fetchDiscussions, addDiscussion, updateDiscussion, deleteDiscussion } = discussionsStore
 
 const search = ref('')
 const newPhraseFr = ref('')
@@ -24,9 +21,9 @@ const editDiscussionId = ref(null)
 const editDiscussionName = ref('')
 
 const filteredPhrases = computed(() => {
-  if (!search.value) return phrases
+  if (!search.value) return phrasesStore.phrases
   const s = search.value.toLowerCase()
-  return phrases.filter(
+  return phrasesStore.phrases.filter(
     phrase =>
       phrase.phrasefrancais?.toLowerCase().includes(s) ||
       phrase.phrasepatois?.toLowerCase().includes(s)
@@ -34,9 +31,8 @@ const filteredPhrases = computed(() => {
 })
 
 onMounted(async () => {
-  await fetchPhrases()
-  await fetchDiscussions()
-  console.log('Phrases fetched:', phrases)
+  await phrasesStore.fetchPhrases()
+  await discussionsStore.fetchDiscussions()
 })
 
 function startEdit(phrase) {
@@ -56,7 +52,7 @@ function cancelEdit() {
 }
 
 async function saveEdit() {
-  await updatePhrase(
+  await phrasesStore.updatePhrase(
     editId.value,
     editPhraseFr.value,
     editPhrasePa.value,
@@ -67,7 +63,7 @@ async function saveEdit() {
 }
 
 async function handleAdd() {
-  await addPhrase(
+  await phrasesStore.addPhrase(
     newPhraseFr.value,
     newPhrasePa.value,
     newCheminAudio.value,
@@ -79,6 +75,7 @@ async function handleAdd() {
   newIdDiscussion.value = ''
 }
 
+// --- Discussions ---
 function startEditDiscussion(discussion) {
   editDiscussionId.value = discussion.iddiscussion
   editDiscussionName.value = discussion.nomdiscussion
@@ -90,12 +87,12 @@ function cancelEditDiscussion() {
 }
 
 async function saveEditDiscussion() {
-  await updateDiscussion(editDiscussionId.value, editDiscussionName.value)
+  await discussionsStore.updateDiscussion(editDiscussionId.value, editDiscussionName.value)
   cancelEditDiscussion()
 }
 
 async function handleAddDiscussion() {
-  await addDiscussion(newDiscussion.value)
+  await discussionsStore.addDiscussion(newDiscussion.value)
   newDiscussion.value = ''
 }
 </script>
@@ -117,15 +114,15 @@ async function handleAddDiscussion() {
         <input v-model="newCheminAudio" placeholder="Chemin audio" />
         <select v-model="newIdDiscussion" class="discussion-select">
           <option value="">Aucune discussion</option>
-          <option v-for="d in discussions" :key="d.iddiscussion" :value="d.iddiscussion">
+          <option v-for="d in discussionsStore.discussions" :key="d.iddiscussion" :value="d.iddiscussion">
             {{ d.nomdiscussion }}
           </option>
         </select>
         <button type="submit">Ajouter</button>
       </form>
 
-      <div v-if="loading" class="info-msg">Chargement...</div>
-      <div v-if="error" class="error-msg">{{ error }}</div>
+      <div v-if="phrasesStore.loading" class="info-msg">Chargement...</div>
+      <div v-if="phrasesStore.error" class="error-msg">{{ phrasesStore.error }}</div>
 
       <table>
         <thead>
@@ -148,14 +145,14 @@ async function handleAddDiscussion() {
             <td v-if="editId !== phrase.idphrase">
               <span v-if="phrase.iddiscussion">
                 [{{ phrase.iddiscussion }}] 
-                {{ discussions.find(d => d.iddiscussion == phrase.iddiscussion)?.nomdiscussion || '—' }}
+                {{ discussionsStore.discussions.find(d => d.iddiscussion == phrase.iddiscussion)?.nomdiscussion || '—' }}
               </span>
               <span v-else>—</span>
             </td>
             <td v-else>
               <select v-model="editIdDiscussion" class="discussion-select">
                 <option value="">Aucune discussion</option>
-                <option v-for="d in discussions" :key="d.iddiscussion" :value="d.iddiscussion">
+                <option v-for="d in discussionsStore.discussions" :key="d.iddiscussion" :value="d.iddiscussion">
                   {{ d.nomdiscussion }}
                 </option>
               </select>
@@ -167,7 +164,7 @@ async function handleAddDiscussion() {
               </template>
               <template v-else>
                 <button class="modifier-btn" @click="startEdit(phrase)">Modifier</button>
-                <button @click="deletePhrase(phrase.idphrase)">Supprimer</button>
+                <button @click="phrasesStore.deletePhrase(phrase.idphrase)">Supprimer</button>
               </template>
             </td>
           </tr>
@@ -181,8 +178,8 @@ async function handleAddDiscussion() {
         <input v-model="newDiscussion" placeholder="Nom de la discussion" required />
         <button type="submit">Ajouter</button>
       </form>
-      <div v-if="loadingDiscussions" class="info-msg">Chargement...</div>
-      <div v-if="errorDiscussions" class="error-msg">{{ errorDiscussions }}</div>
+      <div v-if="discussionsStore.loading" class="info-msg">Chargement...</div>
+      <div v-if="discussionsStore.error" class="error-msg">{{ discussionsStore.error }}</div>
       <table>
         <thead>
           <tr>
@@ -192,7 +189,7 @@ async function handleAddDiscussion() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="discussion in discussions" :key="discussion.iddiscussion">
+          <tr v-for="discussion in discussionsStore.discussions" :key="discussion.iddiscussion">
             <td>{{ discussion.iddiscussion }}</td>
             <td v-if="editDiscussionId !== discussion.iddiscussion">{{ discussion.nomdiscussion }}</td>
             <td v-else>
@@ -205,7 +202,7 @@ async function handleAddDiscussion() {
               </template>
               <template v-else>
                 <button class="modifier-btn" @click="startEditDiscussion(discussion)">Modifier</button>
-                <button @click="deleteDiscussion(discussion.iddiscussion)">Supprimer</button>
+                <button @click="discussionsStore.deleteDiscussion(discussion.iddiscussion)">Supprimer</button>
               </template>
             </td>
           </tr>

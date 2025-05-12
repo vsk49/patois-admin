@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useMotsStore } from '@/stores/MotsStore'
 
 const motsStore = useMotsStore()
-const { mots, loading, error, fetchMots, addMot, updateMot, deleteMot } = motsStore
+// PAS de déstructuration ici !
 
 const search = ref('')
 const newMotFr = ref('')
@@ -17,9 +17,9 @@ const editCheminImage = ref('')
 const editCheminAudio = ref('')
 
 const filteredMots = computed(() => {
-  if (!search.value) return mots
+  if (!search.value) return motsStore.mots
   const s = search.value.toLowerCase()
-  return mots.filter(
+  return motsStore.mots.filter(
     mot =>
       mot.motfrancais?.toLowerCase().includes(s) ||
       mot.motpatois?.toLowerCase().includes(s)
@@ -27,7 +27,7 @@ const filteredMots = computed(() => {
 })
 
 onMounted(async () => {
-  await fetchMots()
+  await motsStore.fetchMots()
 })
 
 function startEdit(mot) {
@@ -47,7 +47,7 @@ function cancelEdit() {
 }
 
 async function saveEdit() {
-  await updateMot(
+  await motsStore.updateMot(
     editId.value,
     editMotFr.value,
     editMotPa.value,
@@ -58,7 +58,7 @@ async function saveEdit() {
 }
 
 async function handleAdd() {
-  await addMot(
+  await motsStore.addMot(
     newMotFr.value,
     newMotPa.value,
     newCheminImage.value,
@@ -68,6 +68,10 @@ async function handleAdd() {
   newMotPa.value = ''
   newCheminImage.value = ''
   newCheminAudio.value = ''
+}
+
+async function handleDelete(idmot) {
+  await motsStore.deleteMot(idmot)
 }
 </script>
 
@@ -90,8 +94,10 @@ async function handleAdd() {
         <button type="submit">Ajouter</button>
       </form>
 
-      <div v-if="loading" class="info-msg">Chargement...</div>
-      <div v-if="error" class="error-msg">{{ error }}</div>
+      <button @click="motsStore.fetchMots">Rafraîchir</button>
+
+      <div v-if="motsStore.loading" class="info-msg">Chargement...</div>
+      <div v-if="motsStore.error" class="error-msg">{{ motsStore.error }}</div>
 
       <table>
         <thead>
@@ -104,7 +110,7 @@ async function handleAdd() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="mot in filteredMots" :key="mot.idmot || mot.motfrancais + mot.motpatois">
+          <tr v-for="mot in filteredMots" :key="mot.idmot">
             <td v-if="editId !== mot.idmot">{{ mot.motfrancais }}</td>
             <td v-else>
               <input v-model="editMotFr" />
@@ -128,7 +134,7 @@ async function handleAdd() {
               </template>
               <template v-else>
                 <button class="modifier-btn" @click="startEdit(mot)">Modifier</button>
-                <button @click="deleteMot(mot.idmot)">Supprimer</button>
+                <button @click="handleDelete(mot.idmot)">Supprimer</button>
               </template>
             </td>
           </tr>
