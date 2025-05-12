@@ -104,8 +104,6 @@ async function handleAdd() {
         placeholder="Rechercher une ressource..."
       />
 
-      <button @click="ressourcesStore.fetchRessources" style="margin-bottom:1rem;">Rafraîchir</button>
-
       <form @submit.prevent="handleAdd" class="add-form">
         <input v-model="newNom" placeholder="Nom" required />
         <select v-model="newType" class="discussion-select" required>
