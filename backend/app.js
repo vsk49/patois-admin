@@ -29,6 +29,7 @@ const app = express();
 app.use(cors())
 app.use(logger('dev'));
 app.use(json());
+app.use(express.json());
 app.use(urlencoded({ extended: false }));
 
 // Attach db client to each request
@@ -71,8 +72,17 @@ app.use(function(err, req, res) {
   res.json({ error: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
+
+// Middleware pour injecter une fausse db pour les tests (remplaçable)
+app.use((req, res, next) => {
+  req.db = { query: async () => ({ rows: [] }) }; // par défaut, à remplacer dans les tests
+  next();
 });
+
+app.use('/mots', motsRouter);
 
 export default app;
