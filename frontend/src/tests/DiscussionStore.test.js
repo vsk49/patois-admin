@@ -9,7 +9,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useDiscussionsStore } from '../src/stores/DiscussionStore'
+import { useDiscussionsStore } from '../stores/DiscussionStore'
 import axios from 'axios'
 
 // Mock axios
