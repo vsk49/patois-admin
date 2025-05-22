@@ -1,0 +1,74 @@
+stages:
+  - lints
+  - build
+  - test
+  - deploy
+
+variables:
+  NODE_ENV: production
+
+# Linting stage for both frontend and backend
+lints:
+  stage: lints
+  image: node:20
+  before_script:
+    - cd frontend && npm ci && cd ..
+    - cd backend && npm ci && cd ..
+  script:
+    # Add or customize the lint commands as appropriate for your setup
+    - cd frontend && npx eslint . --ext .js,.vue || true
+    - cd backend && npx eslint . --ext .js || true
+  allow_failure: true
+  only:
+    - merge_requests
+    - main
+
+# Build frontend and backend
+build:
+  stage: build
+  image: node:20
+  before_script:
+    - cd frontend && npm ci && cd ..
+    - cd backend && npm ci && cd ..
+  script:
+    - cd frontend && npm run build && cd ..
+    # Optionally, build backend (e.g., transpile or bundle if needed)
+  artifacts:
+    paths:
+      - frontend/dist/
+  only:
+    - merge_requests
+    - main
+
+# Run frontend and backend tests
+test:
+  stage: test
+  image: node:20
+  services:
+    - postgres:16
+  variables:
+    POSTGRES_DB: patois_test
+    POSTGRES_USER: testuser
+    POSTGRES_PASSWORD: testpass
+    DATABASE_URL: postgres://testuser:testpass@postgres:5432/patois_test
+  before_script:
+    - cd frontend && npm ci && cd ..
+    - cd backend && npm ci && cd ..
+    - cd backend && npx prisma migrate deploy || true && cd ..
+  script:
+    # Frontend tests (uses Vitest)
+    - cd frontend && npx vitest run && cd ..
+    # Backend tests (uses Jest)
+    - cd backend && npx jest --ci && cd ..
+  only:
+    - merge_requests
+    - main
+
+# Dummy deploy step (replace with real one)
+deploy:
+  stage: deploy
+  image: node:20
+  script:
+    - echo "Deploy your app here (e.g., copy build artifacts, run docker-compose, etc)"
+  only:
+    - main
