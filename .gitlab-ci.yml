@@ -10,7 +10,7 @@ variables:
 # Linting stage for both frontend and backend
 lints:
   stage: lints
-  image: node:20
+  image: node:24
   before_script:
     - cd frontend && npm ci && cd ..
     - cd backend && npm ci && cd ..
@@ -26,13 +26,14 @@ lints:
 # Build frontend and backend
 build:
   stage: build
-  image: node:20
+  image: node:24
   before_script:
     - cd frontend && npm ci && cd ..
     - cd backend && npm ci && cd ..
   script:
     - cd frontend && npm run build && cd ..
-    # Optionally, build backend (e.g., transpile or bundle if needed)
+    # Optionally, build backend if needed
+    - cd backend && node server.js --build && cd ..
   artifacts:
     paths:
       - frontend/dist/
@@ -43,23 +44,23 @@ build:
 # Run frontend and backend tests
 test:
   stage: test
-  image: node:20
+  image: node:24
   services:
-    - postgres:16
+    - postgres:15
   variables:
     POSTGRES_DB: patois_test
-    POSTGRES_USER: testuser
-    POSTGRES_PASSWORD: testpass
-    DATABASE_URL: postgres://testuser:testpass@postgres:5432/patois_test
+    POSTGRES_USER: test_user
+    POSTGRES_PASSWORD: test_pass
+    DATABASE_URL: postgres://test_user:test_pass@postgres:5432/patois_test
   before_script:
     - cd frontend && npm ci && cd ..
     - cd backend && npm ci && cd ..
     - cd backend && npx prisma migrate deploy || true && cd ..
   script:
     # Frontend tests (uses Vitest)
-    - cd frontend && npx vitest run && cd ..
+    - cd frontend && npx vitest run --reporter verbose && cd ..
     # Backend tests (uses Jest)
-    - cd backend && npx jest --ci && cd ..
+    - cd backend && npm test -- --verbose && cd ..
   only:
     - merge_requests
     - main
@@ -67,7 +68,7 @@ test:
 # Dummy deploy step (replace with real one)
 deploy:
   stage: deploy
-  image: node:20
+  image: node:24
   script:
     - echo "Deploy your app here (e.g., copy build artifacts, run docker-compose, etc)"
   only:
