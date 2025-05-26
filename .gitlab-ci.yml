@@ -33,11 +33,9 @@ build:
     - cd frontend && npm ci && cd ..
     - cd backend && npm ci && cd ..
   script:
-    - cd frontend && npm ci && cd ..
-    - cd frontend && ls -l node_modules/.bin && cd ..
     - cd frontend && npm run build && cd ..
     # Optionally, build backend if needed
-    # - cd backend && node server.js --build && cd ..
+    - cd backend && npm run devStart --build && cd ..
   artifacts:
     paths:
       - frontend/dist/
@@ -73,12 +71,24 @@ test:
   tags: 
     - pevn
 
-# Dummy deploy step (replace with real one)
+# Deploy to production
 deploy:
   stage: deploy
-  image: node:24
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_TLS_CERTDIR: ""
   script:
-    - echo "Deploy your app here (e.g., copy build artifacts, run docker-compose, etc)"
+    # Build Docker image (adjust tag as needed)
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    # Login to GitLab Container Registry
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    # Push image
+    - docker push $CI_REGISTRY_IMAGE:latest
+    # Optionally, deploy to your server (example with SSH)
+    # - ssh user@your-server 'cd /path/to/app && docker-compose pull && docker-compose up -d'
   only:
     - main
   tags: 

@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "devStart": "nodemon app.js",
+    "devStart": "nodemon server.js",
     "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
   },
   "dependencies": {
