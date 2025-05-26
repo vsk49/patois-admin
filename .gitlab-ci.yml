@@ -4,8 +4,8 @@ stages:
   - test
   - deploy
 
-variables:
-  NODE_ENV: production
+# variables:
+#   NODE_ENV: production
 
 # Linting stage for both frontend and backend
 lints:
