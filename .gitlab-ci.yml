@@ -22,6 +22,8 @@ lints:
   only:
     - merge_requests
     - main
+  tags: 
+    - pevn
 
 # Build frontend and backend
 build:
@@ -40,6 +42,8 @@ build:
   only:
     - merge_requests
     - main
+  tags: 
+    - pevn
 
 # Run frontend and backend tests
 test:
@@ -64,6 +68,8 @@ test:
   only:
     - merge_requests
     - main
+  tags: 
+    - pevn
 
 # Dummy deploy step (replace with real one)
 deploy:
@@ -73,3 +79,5 @@ deploy:
     - echo "Deploy your app here (e.g., copy build artifacts, run docker-compose, etc)"
   only:
     - main
+  tags: 
+    - pevn
