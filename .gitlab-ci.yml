@@ -35,7 +35,7 @@ build:
   script:
     - cd frontend && npm run build && cd ..
     # Optionally, build backend if needed
-    - cd backend && npm run devStart --build && cd ..
+    # - cd backend && npm run devStart --build && cd ..
   artifacts:
     paths:
       - frontend/dist/
