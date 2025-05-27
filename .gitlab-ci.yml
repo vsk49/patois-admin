@@ -75,12 +75,13 @@ test:
 deploy:
   stage: deploy
   image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_HOST: tcp://docker:2375/
-    DOCKER_TLS_CERTDIR: ""
+  # services:
+  #   - docker:dind
+  # variables:
+  #   DOCKER_HOST: tcp://docker:2375/
+  #   DOCKER_TLS_CERTDIR: ""
   script:
+    - docker info 
     # Build Docker image (adjust tag as needed)
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     # Login to GitLab Container Registry
