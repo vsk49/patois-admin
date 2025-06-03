@@ -34,8 +34,17 @@ export const usePhrasesStore = defineStore('phrases', () => {
   // Helper to format audio path
   function formatAudioPath(path) {
     if (!path) return '';
-    let p = path.replace(/^audio\//, '').replace(/\s+/g, '_');
-    if (!p.endsWith('.mp3')) p += '.mp3';
+    // 1) Trim whitespace
+    let p = path.trim();
+    // 2) Remove **only lowercase** "audio/" prefix
+    p = p.replace(/^audio\//, '');
+    // 3) Replace spaces with underscores
+    p = p.replace(/\s+/g, '_');
+    // 4) If it doesn’t already end with ".mp3" **case-sensitively**, append it
+    if (!p.endsWith('.mp3')) {
+      p += '.mp3';
+    }
+    // 5) Always prefix with lowercase "audio/"
     return `audio/${p}`;
   }
 

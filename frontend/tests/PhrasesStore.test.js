@@ -209,4 +209,59 @@ describe('PhrasesStore', () => {
       expect(store.error).toBe(errorMessage)
     })
   })
+
+  describe('PhrasesStore formatting edge cases', () => {
+    let store
+
+    const audioCases = [
+      { input: '',        expected: '' },
+      { input: null,      expected: '' },
+      { input: undefined, expected: '' },
+      { input: 'audio/',  expected: 'audio/.mp3' },
+      { input: 'song',    expected: 'audio/song.mp3' },
+      { input: 'song.mp3',expected: 'audio/song.mp3' },
+      { input: 'audio/song',            expected: 'audio/song.mp3' },
+      { input: 'audio/song.mp3',        expected: 'audio/song.mp3' },
+      { input: 'audio/song with space', expected: 'audio/song_with_space.mp3' },
+      { input: ' AUDIO/My Track .Mp3 ', expected: 'audio/AUDIO/My_Track_.Mp3.mp3' }
+    ]
+
+    beforeEach(() => {
+      setActivePinia(createPinia())
+      vi.clearAllMocks()
+      // always succeed fetch so add/update see a fresh list
+      axios.get.mockResolvedValue({ data: [] })
+      axios.post.mockResolvedValue({ data: { idphrase: 1 } })
+      axios.put.mockResolvedValue({ data: {} })
+      store = usePhrasesStore()
+    })
+
+    it.each(audioCases)('addPhrase formats cheminaudio("%s") → "%s"', async ({ input, expected }) => {
+      await store.addPhrase('FR', 'PT', input, 42)
+      expect(axios.post).toHaveBeenLastCalledWith(
+        'http://localhost:3000/phrases',
+        expect.objectContaining({
+          phrasefrancais: 'FR',
+          phrasepatois:   'PT',
+          iddiscussion:  42,
+          cheminaudio:   expected
+        }),
+        expect.any(Object)
+      )
+    })
+
+    it.each(audioCases)('updatePhrase formats cheminaudio("%s") → "%s"', async ({ input, expected }) => {
+      await store.updatePhrase(7, 'FR2', 'PT2', input, 99)
+      expect(axios.put).toHaveBeenLastCalledWith(
+        'http://localhost:3000/phrases/7',
+        expect.objectContaining({
+          phrasefrancais: 'FR2',
+          phrasepatois:   'PT2',
+          iddiscussion:  99,
+          cheminaudio:   expected
+        }),
+        expect.any(Object)
+      )
+    })
+  })
 })
