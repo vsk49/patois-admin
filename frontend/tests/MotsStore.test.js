@@ -166,4 +166,99 @@ describe('MotsStore', () => {
         expect(store.error).toBe(errorMessage)
     })
   })
+describe('formatImagePath and formatAudioPath (indirectly via addMot/updateMot)', () => {
+  it('should format cheminimage correctly in addMot', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] })
+    const store = useMotsStore()
+
+    // Already formatted
+    await store.addMot('fleur', 'flor', 'assets/rose.png', '')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminimage: 'assets/rose.png' }),
+      expect.any(Object)
+    )
+
+    // Needs formatting (no assets/, no .png)
+    await store.addMot('fleur', 'flor', 'rose', '')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminimage: 'assets/rose.png' }),
+      expect.any(Object)
+    )
+
+    // Already has assets/, missing .png
+    await store.addMot('fleur', 'flor', 'assets/rose', '')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminimage: 'assets/rose.png' }),
+      expect.any(Object)
+    )
+
+    // Already has .png, missing assets/
+    await store.addMot('fleur', 'flor', 'rose.png', '')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminimage: 'assets/rose.png' }),
+      expect.any(Object)
+    )
+  })
+
+  it('should format cheminaudio correctly in addMot', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] })
+    const store = useMotsStore()
+
+    // Already formatted
+    await store.addMot('oiseau', 'auzel', '', 'audio/song.mp3')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminaudio: 'audio/song.mp3' }),
+      expect.any(Object)
+    )
+
+    // Needs formatting (no audio/, no .mp3)
+    await store.addMot('oiseau', 'auzel', '', 'song')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminaudio: 'audio/song.mp3' }),
+      expect.any(Object)
+    )
+
+    // Already has audio/, missing .mp3
+    await store.addMot('oiseau', 'auzel', '', 'audio/song')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminaudio: 'audio/song.mp3' }),
+      expect.any(Object)
+    )
+
+    // Already has .mp3, missing audio/
+    await store.addMot('oiseau', 'auzel', '', 'song.mp3')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminaudio: 'audio/song.mp3' }),
+      expect.any(Object)
+    )
+
+    // Spaces in filename
+    await store.addMot('oiseau', 'auzel', '', 'audio/song with space.mp3')
+    expect(axios.post).toHaveBeenCalledWith(
+      'http://localhost:3000/mots',
+      expect.objectContaining({ cheminaudio: 'audio/song_with_space.mp3' }),
+      expect.any(Object)
+    )
+  })
+
+  it('should format cheminimage and cheminaudio correctly in updateMot', async () => {
+    axios.get.mockResolvedValueOnce({ data: [] })
+    const store = useMotsStore()
+
+    await store.updateMot(1, 'fleur', 'flor', 'rose', 'song')
+    expect(axios.put).toHaveBeenCalledWith(
+      'http://localhost:3000/mots/1',
+      expect.objectContaining({ cheminimage: 'assets/rose.png', cheminaudio: 'audio/song.mp3' }),
+      expect.any(Object)
+    )
+  })
+})
 })
