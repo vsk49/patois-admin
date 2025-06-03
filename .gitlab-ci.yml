@@ -1,7 +1,8 @@
 stages:
   - lints
-  - build
   - test
+  - build
+  - sonarqube-check
   - deploy
 
 # variables:
@@ -19,26 +20,6 @@ lints:
     - cd frontend && npx eslint . --ext .js,.vue || true
     - cd backend && npx eslint . --ext .js || true
   allow_failure: true
-  only:
-    - merge_requests
-    - main
-  tags: 
-    - pevn
-
-# Build frontend and backend
-build:
-  stage: build
-  image: node:24
-  before_script:
-    - cd frontend && npm ci && cd ..
-    - cd backend && npm ci && cd ..
-  script:
-    - cd frontend && npm run build && cd ..
-    # Optionally, build backend if needed
-    # - cd backend && npm run devStart --build && cd ..
-  artifacts:
-    paths:
-      - frontend/dist/
   only:
     - merge_requests
     - main
@@ -69,6 +50,49 @@ test:
     - merge_requests
     - main
   tags: 
+    - pevn
+
+# Build frontend and backend
+build:
+  stage: build
+  image: node:24
+  before_script:
+    - cd frontend && npm ci && cd ..
+    - cd backend && npm ci && cd ..
+  script:
+    - cd frontend && npm run build && cd ..
+    # Optionally, build backend if needed
+    # - cd backend && npm run devStart --build && cd ..
+  artifacts:
+    paths:
+      - frontend/dist/
+  only:
+    - merge_requests
+    - main
+  tags: 
+    - pevn
+
+sonarqube-check:
+  stage: sonarqube-check
+  image: 
+    name: sonarsource/sonar-scanner-cli:5.0
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script: 
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - merge_requests
+    - master
+    - main
+    - develop
+  tags:
     - pevn
 
 # Deploy to production
