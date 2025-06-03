@@ -37,22 +37,8 @@ export const useMotsStore = defineStore('mots', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      // Formate le chemin de l'image
-      let img = '';
-      if (cheminimage) {
-        img = cheminimage.startsWith('assets/')
-          ? cheminimage
-          : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
-      }
-      // Formate le chemin de l'audio
-      let audio = '';
-      if (cheminaudio) {
-        if (cheminaudio.startsWith('audio/')) {
-          audio = cheminaudio.replace(/\s+/g, '_');
-        } else {
-          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
-        }
-      }
+      let img = formatImagePath(cheminimage);
+      let audio = formatAudioPath(cheminaudio);
       await axios.post(`${API_URL}/mots`, {
         motfrancais, motpatois, cheminimage: img, cheminaudio: audio
       }, {
@@ -73,21 +59,8 @@ export const useMotsStore = defineStore('mots', () => {
     try {
       const token = localStorage.getItem('authToken')
       // Formate le chemin de l'image
-      let img = '';
-      if (cheminimage) {
-        img = cheminimage.startsWith('assets/')
-          ? cheminimage
-          : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
-      }
-      // Formate le chemin de l'audio
-      let audio = '';
-      if (cheminaudio) {
-        if (cheminaudio.startsWith('audio/')) {
-          audio = cheminaudio.replace(/\s+/g, '_');
-        } else {
-          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
-        }
-      }
+      let img = formatImagePath(cheminimage);
+      let audio = formatAudioPath(cheminaudio);
       await axios.put(`${API_URL}/mots/${idmot}`, {
         motfrancais, motpatois, cheminimage: img, cheminaudio: audio
       }, {
@@ -115,6 +88,23 @@ export const useMotsStore = defineStore('mots', () => {
       error.value = e.response?.data?.message || e.message
     } finally {
       loading.value = false
+    }
+  }
+
+  // Utilise les mêmes fonctions de formatage que dans addMot
+  function formatImagePath(path) {
+    if (!path) return '';
+    return path.startsWith('assets/')
+      ? path
+      : `assets/${path.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
+  }
+
+  function formatAudioPath(path) {
+    if (!path) return '';
+    if (path.startsWith('audio/')) {
+      return path.replace(/\s+/g, '_');
+    } else {
+      return `audio/${path.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
     }
   }
 
