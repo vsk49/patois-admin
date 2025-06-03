@@ -1,6 +1,6 @@
 import express from 'express';
 
-let router = express.Router();
+const router = express.Router();
 
 // C : creer une ressource dans la base de donnees
 router.post('/', async (req, res) => {
@@ -14,6 +14,7 @@ router.post('/', async (req, res) => {
         }
         res.status(201).json({ message: 'Resource created successfully', ressource: rows[0] });
     } catch (error) {
+        console.error('Error creating resource:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -28,6 +29,7 @@ router.get('/', async (req, res) => {
         }
         res.status(200).json(rows);
     } catch (error) {
+        console.error('Error retrieving resources:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -44,6 +46,7 @@ router.get('/:idressource', async (req, res) => {
         }
         res.status(200).json(rows[0]);
     } catch (error) {
+        console.error('Error retrieving resource:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -61,6 +64,7 @@ router.put('/:idressource', async (req, res) => {
         }
         res.status(200).json({ message: 'Resource updated successfully', ressource: rows[0] });
     } catch (error) {
+        console.error('Error updating resource:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -77,6 +81,7 @@ router.delete('/:idressource', async (req, res) => {
         }
         res.status(200).json({ message: 'Resource deleted successfully' });
     } catch (error) {
+        console.error('Error deleting resource:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

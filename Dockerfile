@@ -6,10 +6,12 @@ COPY backend ./backend
 COPY frontend ./frontend
 
 # Install backend dependencies
-RUN cd backend && npm ci
+WORKDIR /app/backend
+RUN npm ci
 
 # Install frontend dependencies and build
-RUN cd frontend && npm ci && npm run build
+WORKDIR /app/frontend
+RUN npm ci && npm run build
 
 # Expose port (adjust as needed)
 EXPOSE 3000

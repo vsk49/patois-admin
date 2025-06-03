@@ -1,6 +1,6 @@
 import request from 'supertest';
 import express from 'express';
-import { jest, describe, beforeEach, it, expect, afterEach } from '@jest/globals';
+import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import jwt from 'jsonwebtoken';
 import router from '../routes/utilisateurs.js';
 

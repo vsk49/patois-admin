@@ -34,6 +34,7 @@ const handleLogin = async () => {
       errorMessage.value = data.error || (data.errors && data.errors.join(', ')) || 'Identifiants invalides'
     }
   } catch (e) {
+    console.error(e)
     errorMessage.value = 'Une erreur est survenue'
   } finally {
     isLoading.value = false

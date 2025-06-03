@@ -38,18 +38,21 @@ export const useMotsStore = defineStore('mots', () => {
     try {
       const token = localStorage.getItem('authToken')
       // Formate le chemin de l'image
-      const img = cheminimage
-        ? cheminimage.startsWith('assets/') ? cheminimage : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`
-        : ''
+      let img = '';
+      if (cheminimage) {
+        img = cheminimage.startsWith('assets/')
+          ? cheminimage
+          : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
+      }
       // Formate le chemin de l'audio
-      const audio = cheminaudio
-        ? (
-            cheminaudio.startsWith('audio/')
-              ? cheminaudio.replace(/\s+/g, '_')
-              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
-          )
-        : ''
-
+      let audio = '';
+      if (cheminaudio) {
+        if (cheminaudio.startsWith('audio/')) {
+          audio = cheminaudio.replace(/\s+/g, '_');
+        } else {
+          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
+        }
+      }
       await axios.post(`${API_URL}/mots`, {
         motfrancais, motpatois, cheminimage: img, cheminaudio: audio
       }, {
@@ -70,18 +73,21 @@ export const useMotsStore = defineStore('mots', () => {
     try {
       const token = localStorage.getItem('authToken')
       // Formate le chemin de l'image
-      const img = cheminimage
-        ? cheminimage.startsWith('assets/') ? cheminimage : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`
-        : ''
+      let img = '';
+      if (cheminimage) {
+        img = cheminimage.startsWith('assets/')
+          ? cheminimage
+          : `assets/${cheminimage.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
+      }
       // Formate le chemin de l'audio
-      const audio = cheminaudio
-        ? (
-            cheminaudio.startsWith('audio/')
-              ? cheminaudio.replace(/\s+/g, '_')
-              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
-          )
-        : ''
-
+      let audio = '';
+      if (cheminaudio) {
+        if (cheminaudio.startsWith('audio/')) {
+          audio = cheminaudio.replace(/\s+/g, '_');
+        } else {
+          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
+        }
+      }
       await axios.put(`${API_URL}/mots/${idmot}`, {
         motfrancais, motpatois, cheminimage: img, cheminaudio: audio
       }, {

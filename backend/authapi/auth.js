@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'tartiflette';
 
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+    const token = authHeader?.split(' ')[1]; // Bearer <token>
     if (!token) {
         return res.status(401).json({ error: 'Token manquant' });
     }

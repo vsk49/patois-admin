@@ -1,6 +1,6 @@
 import express from 'express';
 
-let router = express.Router();
+const router = express.Router();
 
 // C : creer des mots dans la base de donnees
 router.post('/', async (req, res) => {

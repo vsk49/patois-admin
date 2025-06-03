@@ -35,8 +35,8 @@ test:
   variables:
     POSTGRES_DB: patois_test
     POSTGRES_USER: test_user
-    POSTGRES_PASSWORD: test_pass
-    DATABASE_URL: postgres://test_user:test_pass@postgres:5432/patois_test
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    DATABASE_URL: postgres://test_user:${POSTGRES_PASSWORD}@postgres:5432/patois_test
   before_script:
     - cd frontend && npm ci && cd ..
     - cd backend && npm ci && cd ..

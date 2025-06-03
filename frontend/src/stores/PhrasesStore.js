@@ -38,13 +38,14 @@ export const usePhrasesStore = defineStore('phrases', () => {
     try {
       const token = localStorage.getItem('authToken')
       // Formate le chemin de l'audio
-      const audio = cheminaudio
-        ? (
-            cheminaudio.startsWith('audio/')
-              ? cheminaudio.replace(/\s+/g, '_')
-              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
-          )
-        : ''
+      let audio = '';
+      if (cheminaudio) {
+        if (cheminaudio.startsWith('audio/')) {
+          audio = cheminaudio.replace(/\s+/g, '_');
+        } else {
+          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
+        }
+      }
       await axios.post(`${API_URL}/phrases`, {
         phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion
       }, {
@@ -64,13 +65,14 @@ export const usePhrasesStore = defineStore('phrases', () => {
     error.value = null
     try {
       const token = localStorage.getItem('authToken')
-      const audio = cheminaudio
-        ? (
-            cheminaudio.startsWith('audio/')
-              ? cheminaudio.replace(/\s+/g, '_')
-              : `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`
-          )
-        : ''
+      let audio = '';
+      if (cheminaudio) {
+        if (cheminaudio.startsWith('audio/')) {
+          audio = cheminaudio.replace(/\s+/g, '_');
+        } else {
+          audio = `audio/${cheminaudio.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
+        }
+      }
       await axios.put(`${API_URL}/phrases/${idphrase}`, {
         phrasefrancais, phrasepatois, cheminaudio: audio, iddiscussion
       }, {

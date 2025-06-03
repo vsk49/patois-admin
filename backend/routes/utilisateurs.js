@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tartiflette';
 
-let router = express.Router();
+const router = express.Router();
 
 // C : creer des users dans la base de donnees
 router.post('/', async (req, res) => {

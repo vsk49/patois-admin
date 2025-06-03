@@ -30,7 +30,7 @@ function logout() {
 
 <template>
   <nav id="nav-bar" :class="{ 'collapsed': !navOpen }">
-    <input id="nav-toggle" type="checkbox" v-model="navOpen" />
+    <input id="nav-toggle" type="checkbox" v-model="navOpen" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="false" tabindex="0" />
     <div id="nav-header">
       <slot name="header">
         <a id="nav-title" href="#">
@@ -39,7 +39,7 @@ function logout() {
           </slot>
         </a>
       </slot>
-      <label for="nav-toggle" id="burger-label">
+      <label for="nav-toggle" id="burger-label" aria-label="Ouvrir ou fermer la navigation">
         <span id="nav-toggle-burger"></span>
       </label>
     </div>
@@ -67,7 +67,7 @@ function logout() {
     <div id="nav-footer-simple">
       <slot name="footer-avatar">
         <div id="nav-footer-avatar">
-          <img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547" />
+          <img src="https://gravatar.com/avatar/4474ca42d303761c2901fa819c4f2547" alt="Avatar utilisateur" />
         </div>
       </slot>
       <slot name="footer-titlebox">
@@ -129,13 +129,7 @@ function logout() {
   pointer-events: none;
 }
 
-#nav-bar.collapsed #nav-toggle-burger::before {
-  transform: translate(-2px, 8px) rotate(-30deg);
-}
-
-#nav-bar.collapsed #nav-toggle-burger::after {
-  transform: translate(-2px, -8px) rotate(30deg);
-}
+/* Duplicate selector removed to fix compile error */
 
 #nav-bar hr {
   margin: 0;
@@ -282,7 +276,7 @@ function logout() {
 }
 
 .nav-icon {
-  font-family: 'Material Icons';
+  font-family: 'Material Icons', sans-serif;
   font-size: 1.6rem;
   color: #8392a5;
   min-width: 32px;
