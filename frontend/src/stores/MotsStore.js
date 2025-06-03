@@ -94,18 +94,16 @@ export const useMotsStore = defineStore('mots', () => {
   // Utilise les mêmes fonctions de formatage que dans addMot
   function formatImagePath(path) {
     if (!path) return '';
-    return path.startsWith('assets/')
-      ? path
-      : `assets/${path.replace(/^assets\//, '').replace(/\.png$/, '')}.png`;
+    let p = path.replace(/^assets\//, '');
+    if (!p.endsWith('.png')) p += '.png';
+    return `assets/${p}`;
   }
 
   function formatAudioPath(path) {
     if (!path) return '';
-    if (path.startsWith('audio/')) {
-      return path.replace(/\s+/g, '_');
-    } else {
-      return `audio/${path.replace(/\s+/g, '_').replace(/^audio\//, '').replace(/\.mp3$/, '')}.mp3`;
-    }
+    let p = path.replace(/^audio\//, '').replace(/\s+/g, '_');
+    if (!p.endsWith('.mp3')) p += '.mp3';
+    return `audio/${p}`;
   }
 
   // Expose les états et méthodes du store
