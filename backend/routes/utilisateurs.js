@@ -90,7 +90,8 @@ router.post('/auth', async (req, res) => {
         if ((!email && !nomutilisateur) || !motdepasse) {
             errors.push('Email ou nom d\'utilisateur et mot de passe sont obligatoires');
         }
-        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        // Utilisation d'une regex plus simple et sûre pour valider l'email
+        if (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
             errors.push('Email invalide');
         }
         if (nomutilisateur && nomutilisateur.length < 3) {
