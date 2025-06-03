@@ -126,6 +126,7 @@ async function handleAdd() {
       <div v-for="(ressourcesGroup, type) in groupedRessources" :key="type" style="margin-bottom:2rem;">
         <h2 class="type-title">{{ type }}</h2>
         <table>
+          <caption>Ressources de type « {{ type || 'Aucun type' }} »</caption>
           <thead>
             <tr>
               <th>ID</th>

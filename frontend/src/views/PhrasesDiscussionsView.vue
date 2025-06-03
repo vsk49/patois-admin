@@ -125,6 +125,7 @@ async function handleAddDiscussion() {
       <div v-if="phrasesStore.error" class="error-msg">{{ phrasesStore.error }}</div>
 
       <table>
+        <caption>Liste des phrases (français / patois)</caption>
         <thead>
           <tr>
             <th>Français</th>
@@ -181,6 +182,7 @@ async function handleAddDiscussion() {
       <div v-if="discussionsStore.loading" class="info-msg">Chargement...</div>
       <div v-if="discussionsStore.error" class="error-msg">{{ discussionsStore.error }}</div>
       <table>
+        <caption>Liste des discussions</caption>
         <thead>
           <tr>
             <th>ID</th>

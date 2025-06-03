@@ -100,6 +100,7 @@ async function handleDelete(idmot) {
       <div v-if="motsStore.error" class="error-msg">{{ motsStore.error }}</div>
 
       <table>
+        <caption>Liste des mots (français / patois)</caption>
         <thead>
           <tr>
             <th>Mot</th>
