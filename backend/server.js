@@ -1,6 +1,5 @@
 import pkg from 'pg';
-import express, { json, urlencoded } from 'express';
-import { static as serveStatic } from 'express';
+import express, { json, urlencoded, static as serveStatic } from 'express';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import createError from 'http-errors';
