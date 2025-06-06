@@ -24,13 +24,13 @@ const mainMargin = '275px'
   <div class="presentation-root">
     <div class="presentation-container">
       <div class="presentation-content">
-        <h1>Patois Savoyard Admin Interface</h1>
+        <h1 style="text-align: center;">Langue Savoyarde Admin Interface</h1>
         <p class="subtitle">Bienvenue dans le panneau d'administration pour la gestion de la base de données de notre application.</p>
         <div class="spacer" style="height:40px"></div>
         <p class="description">
-          Cette interface vous permettra prochainement de gérer les mots de la base de données, d'ajouter, modifier ou supprimer des données liées au patois savoyard.<br><br>
+          Cette interface vous permettra prochainement de gérer les mots de la base de données, d'ajouter, modifier ou supprimer des données liées à la langue savoyarde.<br><br>
           Merci de votre confiance.<br>
-          <span class="signature">L'équipe Patois Savoyard</span>
+          <span class="signature">L'équipe Langue Savoyarde</span>
         </p>
       </div>
     </div>
